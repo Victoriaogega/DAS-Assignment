@@ -24,17 +24,17 @@ CREATE TABLE supermarket.Products_table(
     product_id INT primary key not null ,
     product_name VARCHAR (100) not null ,
     category VARCHAR (100) not null ,
-     price DECIMAL(4,2) not null ,
+     price DECIMAL(5,2) not null ,
      stock INT not null 
      );
 
      INSERT INTO supermarket.Products_table(product_id,Product_name,category,price,stock)
      VALUES (1,'Laptop','Electronics',1200.00,30),
      (2,'Desk','Furniture',300.00,50),
-     (3,'Chair','Furniture',',150.00,200),
+     (3,'Chair','Furniture',150.00,200),
      (4,'Smartphone','Electronics',800.00,75),
      (5,'Monitor','Electronics',250.00,40),
-     (6,'Bookshelf','Furniture'',100.00,60),
+     (6,'Bookshelf','Furniture',100.00,60),
      (7,'Printer','Electronics',200.00,25);
     
 CREATE TABLE supermarket.Sales_table(
@@ -72,7 +72,7 @@ FROM supermarket.employees_table   employee_details;
 
 -- 2. Select the first names of all employees. 
 
-SELECT firt_name AS name
+SELECT first_name AS name
 FROM supermarket.employees_table ;
 
 -- 3. Select distinct departments from the Employees table. 
@@ -81,7 +81,7 @@ WHERE
 
 
 -- 4. Select the total number of employees. 
-SELECT count(Employee_id) AS total_employees
+SELECT count(employee_id) AS total_employees
 FROM supermarket.employee_table;
 
 
@@ -107,19 +107,19 @@ FROM supermarket.employees_table   employees;
 
 -- 8. Select the lowest salary in the Employees table. 
 SELECT min(salary) AS min_salary
-FROM supermarket.employees _table     employees;
+FROM supermarket.employees_table     employees;
 
 -- 9. Select the total number of male employees. 
 
 SELECT sum(Employee_id) AS total_male_employees
 FROM supermarket.employees_table  employees
 GROUP BY 'Gender'
-WHERE Gender = 'male';
+WHERE Gender ='male';
 -- 10. Select the total number of female employees. 
-SELECT sum(Employee_id) AS female_employees
+SELECT sum(employee_id) AS female_employees
 FROM supermarket.employees_table   employees
 GROUP BY 'Gender'
-WHERE Gender = 'female';
+WHERE Gender ='female' ;
 
 -- 11. Select the total number of employees hired in the year 2020. 
 SELECT *
