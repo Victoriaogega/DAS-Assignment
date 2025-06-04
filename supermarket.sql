@@ -12,7 +12,8 @@ Salary DECIMAL(7,2) NOT NULL
 INSERT INTO supermarket.employees_table(employee_id,first_name,last_name,
 Gender,Department,Hire_date,Salary)
 
-VALUES (1,'John','Doe','male','IT','2018-05-01',60000.00),
+VALUES 
+(1,'John','Doe','male','IT','2018-05-01',60000.00),
 (2,'Jane','Smith','female','HR','2019-06-15',50000.00),
 (3,'Michael','JOhnson','male','finance','2017-03-10',75000.00),
 (4,'Emily','Davis','female','IT','2020-11-20',70000.00),
@@ -21,15 +22,19 @@ VALUES (1,'John','Doe','male','IT','2018-05-01',60000.00),
 (7,'Chris','Taylor','male','IT','2022-02-25',65000.00);
 
 CREATE TABLE supermarket.Products_table(
-    product_id INT primary key not null ,
+    product_id INT PRIMARY KEY not null ,
     product_name VARCHAR (100) not null ,
     category VARCHAR (100) not null ,
      price DECIMAL(5,2) not null ,
      stock INT not null 
      );
 
+ALTER TABLE supermarket.Products_table
+ALTER COLUMN  price TYPE DECIMAL(10, 2);
+
      INSERT INTO supermarket.Products_table(product_id,Product_name,category,price,stock)
-     VALUES (1,'Laptop','Electronics',1200.00,30),
+     VALUES
+     (1,'Laptop','Electronics',1200.0,30),
      (2,'Desk','Furniture',300.00,50),
      (3,'Chair','Furniture',150.00,200),
      (4,'Smartphone','Electronics',800.00,75),
@@ -38,24 +43,24 @@ CREATE TABLE supermarket.Products_table(
      (7,'Printer','Electronics',200.00,25);
     
 CREATE TABLE supermarket.Sales_table(
-    sales_id INT PRIMARY KEY ,
-    product_id INT REFERENCES supemarket.Products_Table(ProductID),
-Employee_id INT REFERENCES supermarket.Employee_Table(EmployeeID),
+sales_id INT PRIMARY KEY ,
+product_id INT REFERENCES supermarket.Products_table(product_id),
+employee_id INT REFERENCES supermarket.employees_table(employee_id),
 sale_date DATE  NOT NULL,
 quantity INT  NOT NULL,
 total DECIMAL (7,2)
 );
 
 INSERT INTO supermarket.Sales_table(
-  sales_id,  product_id, Employee_id,sale_date,quantity ,total
+  sales_id,product_id,employee_id,sale_date,quantity ,total
 )
-VALUES (1,1,1,'2021-01-15',2,2400.00),
-(1,1,1,'2021-03-22',1,300.00),
-(2,2,2,'2021-05-10',4,600.00),
-(3,3,3,'2021-07-18',3,2400.00),
-(4,4,4,'2021-09-25',2,500.00),
-(5,5,5,'2021-11-30',2,2400.00),
-(6,6,6,'2022-11-30',1,100.00),
+VALUES
+(1,1,1,'2021-01-15',2,2400.00),
+(2,2,2,'2021-03-22',1,300.00),
+(3,3,3,'2021-05-10',4,600.00),
+(4,4,4,'2021-07-18',3,2400.00),
+(5,5,5,'2021-09-25',2,500.00),
+(6,6,6,'2021-11-30',1,100.00),
 (7,7,1,'2022-02-15',1,200.00),
 (8,1,2,'2022-04-10',1,1200.00),
 (9,2,3,'2022-06-20',2,600.00),
@@ -76,13 +81,13 @@ SELECT first_name AS name
 FROM supermarket.employees_table ;
 
 
-SELECT Department
-WHERE 
+SELECT DISTINCT department
+FROM supermarket.employees_table;
 
 
  
 SELECT count(employee_id) AS total_employees
-FROM supermarket.employee_table;
+FROM supermarket.employees_table;
 
 
 
@@ -113,18 +118,16 @@ FROM supermarket.employees_table     employees;
 
 SELECT sum(Employee_id) AS total_male_employees
 FROM supermarket.employees_table  employees
-GROUP BY 'Gender'
 WHERE Gender ='male';
 
 SELECT sum(employee_id) AS female_employees
 FROM supermarket.employees_table   employees
-GROUP BY 'Gender'
 WHERE Gender ='female' ;
 
 
-SELECT *
+SELECT SUM(employee_id)
 FROM supermarket.employees_table    employees
-WHERE extract(YEAR FROM Hire_date = 2020);
+WHERE extract(YEAR FROM Hire_date) = 2020;
 
 
 
@@ -133,8 +136,8 @@ FROM supermarket.employees_table   employees
 WHERE Department = 'IT';
 
 
-SELECT sum(Employee_id) AS total_employees
-FROM supermarket.employees_id   employee
+SELECT  department, sum(Employee_id) AS total_employees
+FROM supermarket.employees_table   employee
 GROUP BY Department
 
 
@@ -176,14 +179,15 @@ SELECT count(DISTINCT First_name) AS unique_name
 FROM supermarket.employees_table;
 
 
-SELECT *
-FROM supermarket.employees_table emp, supermarket.Sales_table sales
-WHERE emp.Employee_id = sales.Employee_id;
+SELECT e.employee_id, s.quantity
+FROM supermarket.employees_table e
+INNER JOIN supermarket.Sales_table s
+ON e.Employee_id = s.Employee_id;
 
 
 
 SELECT *
-FROM supermarket.employee_table  employee_dets
+FROM supermarket.employees_table emp
 ORDER BY Hire_date ASC
 limit 10;
 
@@ -191,14 +195,71 @@ limit 10;
 
 
 SELECT First_name AS f_name
-FROM supermarket.employee_table 
+FROM  supermarket.employees_table
 WHERE Employee_id NOT IN (SELECT Employee_id from supermarket.Sales_table);
 
 
-SELECT Employee_id, First_name, Department,COUNT(Employee_id) AS  total_sales
-FROM supermarket.employee_table emp, supermarket.Sales_table 
-WHERE emp.Employee_id = sale.Employee_id
-GROUP BY emp.Employee_id, First_name;
+
+
+SELECT e.first_name, SUM(s.quantity) AS total_sales 
+FROM supermarket.employees_table e
+INNER JOIN supermarket.sales_table s 
+ ON e.employee_id = s.employee_id
+GROUP BY e.employee_id;
+
+
+
 
  
+SELECT e.first_name, SUM(s.quantity) AS total_sales
+FROM supermarket.employees_table e
+JOIN supermarket.sales_table  s 
+ON e.employee_id = s.employee_id
+GROUP BY e.employee_id
+ORDER BY total_sales DESC
+LIMIT 1;
+
+
+
+
+SELECT e.department, AVG(s.quantity)
+FROM supermarket.employees_table e
+JOIN supermarket.sales_table  s 
+ON e.employee_id = s.employee_id
+GROUP BY e.department
+
+
+
+
+SELECT e.first_name, SUM(s.quantity)
+FROM supermarket.employees_table e
+JOIN supermarket.sales_table  s 
+ON e.employee_id = s.employee_id
+WHERE extract(YEAR FROM s.sale_date) = 2021
+GROUP BY e.first_name;
+
+
+
+SELECT e.first_name, SUM(s.quantity) AS total_sales
+FROM supermarket.employees_table e
+JOIN supermarket.sales_table  s 
+ON  e.employee_id = s.employee_id
+GROUP BY e.first_name
+ORDER BY total_sales DESC
+LIMIT 3;
+
+
+SELECT e.department, SUM(s.quantity) AS total_sales
+FROM  supermarket.employees_table e
+JOIN supermarket.sales_table  s
+ON  e.employee_id = s.employee_id
+GROUP BY e.department;
+
+--   30. Select the total revenue generated by sales of products in each category.
+SELECT pr.product_name, SUM(pr.price* s.quantity) AS total_revenue
+FROM supermarket.Products_table pr
+JOIN  supermarket.sales_table  s
+ON  pr.product_id = s.product_id
+GROUP BY pr.product_name;
+
 
